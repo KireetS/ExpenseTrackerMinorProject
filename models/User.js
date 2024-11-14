@@ -26,6 +26,17 @@ const UserSchema = new Schema({
       { name: "All" },
     ],
   },
+  investmentTypes: {
+    type: [{ name: String, createdAt: { type: Date, default: Date.now } }],
+    default: [
+      { name: "Stocks" },
+      { name: "Bonds" },
+      { name: "Real Estate" },
+      { name: "Cryptocurrency" },
+      { name: "Commodities" },
+      { name: "Other" },
+    ],
+  },
 });
 
 module.exports = mongoose.model("User", UserSchema);

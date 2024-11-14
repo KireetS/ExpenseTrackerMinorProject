@@ -12,6 +12,7 @@ app.use("/api/auth", require("./routes/auth/auth"));
 app.use("/api/expenses", require("./routes/expenses/expenses"));
 app.use("/api/goals", require("./routes/goals/goals"));
 app.use("/api/investments", require("./routes/investments/investments"));
+app.use("/api/insights", require("./routes/Insights/insights"));
 app.get("/", (req, res) => {
   res.json({ msg: "hello" });
 });
