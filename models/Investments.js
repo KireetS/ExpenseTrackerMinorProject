@@ -9,6 +9,9 @@ const investmentSchema = new mongoose.Schema(
       index: true,
     },
     amount: { type: Number, required: true }, // amount invested
+    roi: { type: Number, required: true }, // amount invested
+    duration: { type: Number, required: true }, // amount invested
+    expAmount: { type: Number, required: true }, // amount invested
     date: { type: Date, required: true, index: true }, // date of investment
     investmentType: { type: String, required: true }, // type of investment (e.g., stocks, bonds)
     description: { type: String }, // optional description for the investment

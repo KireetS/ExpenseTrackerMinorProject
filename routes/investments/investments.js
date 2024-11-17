@@ -5,8 +5,9 @@ const User = require("../../models/User"); // Add User model
 const fetchUser = require("../../middlewares/fetchUser"); // Your middleware for fetching user
 
 // Create a new investment
+
 router.post("/", fetchUser, async (req, res) => {
-  const { amount, date, investmentType, description } = req.body;
+  const { amount, date, roi, duration, investmentType, description } = req.body;
 
   try {
     // Fetch the user's predefined investment types
@@ -21,10 +22,14 @@ router.post("/", fetchUser, async (req, res) => {
     if (!validInvestmentTypes.includes(investmentType)) {
       return res.status(400).json({ message: "Invalid investment type" });
     }
-
+    const returns =
+      Number(amount) * Math.pow(1 + Number(roi) / 100, Number(duration));
     const newInvestment = new Investments({
       user: req.user.id, // Assuming the user's ID is stored in req.user after fetching
       amount,
+      roi,
+      duration,
+      expAmount: returns,
       date,
       investmentType,
       description,
@@ -142,6 +147,29 @@ router.post("/investment-types", fetchUser, async (req, res) => {
     return res
       .status(500)
       .json({ message: "Error adding investment type", error });
+  }
+});
+
+router.get("/total-investment", fetchUser, async (req, res) => {
+  try {
+    // Aggregate total investments for the logged-in user
+    const totalInvestments = await Investments.aggregate([
+      { $match: { user: req.user.id } }, // Filter investments by user ID
+      { $group: { _id: null, totalAmount: { $sum: "$amount" } } }, // Sum up the 'amount' field
+    ]);
+
+    // Extract the total amount or set it to 0 if no investments exist
+    const totalAmount =
+      totalInvestments.length > 0 ? totalInvestments[0].totalAmount : 0;
+
+    // Send the total amount as the response
+    return res.status(200).json({ totalAmount });
+  } catch (error) {
+    // Handle errors and send appropriate response
+    console.error("Error fetching total investments:", error);
+    return res
+      .status(500)
+      .json({ message: "Error fetching total investments", error });
   }
 });
 
